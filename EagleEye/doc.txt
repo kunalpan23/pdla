@@ -1,0 +1,21 @@
+Source for message passing with the delay
+https://stackoverflow.com/questions/54181734/chrome-extension-message-passing-unchecked-runtime-lasterror-could-not-establi/54686484#54686484
+
+Test Cases that can be automated
+1.Number of cta's in the page (by checking cta btn class) and number of clickable cta's
+2.Events- landing impressio, install click, install success, search count
+3.In FF cws badge and chrome disclaimer should not be present
+4.The footer linkouts should have domain name in url
+5.Small images in svg format
+6.Page title should be the extension name for lander and 'new tab' for new tab page
+7.After installation all cta's should be non clickable including cws badge and logo
+8.If hover effect is there for all clickable elements (cta + footer links in disclaimer)
+9.Please add the tracking class and the corresponding button name in event_action for the logos which are clickable. Any button/image/text which opens CWS window needs to have both the tracker class name and the corresponding button name to be passed in the "data-event_tag" attribute. It has to be done for the following and any future landers that get built: 
+10.Console errors in live link
+11.If cancel banners show up after cws is closed by clicking on cross button or 'no thanks'
+12.Check for both Yes and No criteria of cancel banner- On 'NO', the cws should open again and on 'YES', the opt in overlay should be shown
+13.Favicon on window overlay should be that of extension
+14.The search box should be on focus on page load of every new tab page
+
+Note:
+If the classes are updated, how do we update them in the automated code

@@ -1,0 +1,20 @@
+{
+    "ctabtn": [
+        {
+            "innerText": {
+                "class": "some class",
+                "something": "something more"
+            },
+            "innerText": {
+                "class": "some class",
+                "something": "something more"
+            }
+        },
+        {
+            "innerText": {
+                "class": "some class",
+                "something": "something more"
+            }
+        }
+    ]
+}
