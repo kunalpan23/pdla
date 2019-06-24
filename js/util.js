@@ -36,6 +36,12 @@ __button.forEach((e, o) => {
                     __location = `${__location.origin}/help.html`;
                     window.open(__location, '_blank');
                     break;
+
+                case 'setting':
+                    console.log('Help Page is opening');
+                    __location = `${__location.origin}/setting.html`;
+                    window.open(__location, '_blank');
+                    break;
             }
         } catch (e) {
             console.log(e);

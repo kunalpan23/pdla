@@ -1,5 +1,5 @@
 {
-    "manifest_version": 3,
+    "manifest_version": 2,
     "name": "PDLA EAGLE EYE",
     "description": "This extension Checks the Images and Make them visible",
     "version": "1.0.0",

@@ -9,16 +9,19 @@ class App {
         elemJson: '',
         list: ''
     };
-    checkpoints = {
-        ctabtn: '.ctabtn',
-        title: 'title',
-        anchrortags: 'a',
-        link: 'link',
-        scripts: 'script',
-        att: '[data-event_tag]',
-        id: '#overlay_template'
-    };
+    checkpoints = JSON.parse(
+        chrome.storage.sync.get('checkpoints', o => o.checkpoints)
+    );
 
+    //     {
+    //     ctabtn: '.ctabtn',
+    //         title: 'title',
+    //             anchrortags: 'a',
+    //                 link: 'link',
+    //                     scripts: 'script',
+    //                         att: '[data-event_tag]',
+    //                             id: '#overlay_template'
+    // }
     constructor() {}
 
     setTextForHideAndShow(e) {
@@ -76,14 +79,19 @@ class App {
 
     loopThrough() {
         const parentUl = document.querySelector('[p-results]');
+        let tagCount = 0;
+        let attrCount = 0;
         console.log(this.details.list);
         for (let x in this.details.list) {
+            console.log(this.details.list);
             const li = document.createElement('li');
             const div = document.createElement('div');
             div.classList.add('button');
-            div.innerHTML = x.split(':')[1] == 'in' ? `${x}:` : x;
+            // div.innerHTML = `${x}: Tags => <span class="tagcount${x}">${tagCount}</span>`;
+            div.innerHTML = `${x}: Tags => <span class="tagcount${x}"></span>`;
 
             this.appendChildDynamic(li, div);
+
             const ul = document.createElement('ul');
             this.appendChildDynamic(li, ul);
             ul.classList.add('sub-ul');
@@ -91,35 +99,38 @@ class App {
             if (this.details.list[x].length) {
                 this.details.list[x].forEach(element => {
                     const li2 = document.createElement('li');
-                    const div = document.createElement('div');
-                    div.classList.add('button');
+                    const div1 = document.createElement('div');
+                    div1.classList.add('button');
 
                     for (let a in element) {
-                        div.innerHTML =
+                        tagCount++;
+
+                        div1.innerHTML =
                             a || element
                                 ? `Tag Name: <span class="bold">${a}</span>`
                                 : 'No Data Found';
-                        this.appendChildDynamic(li2, div);
+                        this.appendChildDynamic(li2, div1);
                         // Appending or BUTTON TAGs
 
                         const newUl = document.createElement('ul');
                         newUl.classList.add('sub_ul');
                         this.appendChildDynamic(li2, newUl);
 
-                        for (let x in element[a]) {
+                        for (let e in element[a]) {
+                            attrCount++;
                             const li3 = document.createElement('li');
                             const div2 = document.createElement('div');
                             div2.innerHTML =
-                                x || element[a][x]
-                                    ? `<span class="bold">${x}:</span> ${
-                                          element[a][x]
+                                x || element[a][e]
+                                    ? `<span class="bold">${e}: </span>${
+                                          element[a][e]
                                       }`
                                     : 'No Data Found';
+                            // debugger;
                             this.appendChildDynamic(li3, div2);
                             this.appendChildDynamic(newUl, li3);
                         }
                     }
-
                     this.appendChildDynamic(ul, li2);
                 });
             } else {
@@ -130,6 +141,8 @@ class App {
                 this.appendChildDynamic(ul, li2);
             }
             this.appendChildDynamic(parentUl, li);
+            document.querySelector(`.tagcount${x}`).textContent = tagCount;
+            tagCount = 0;
         }
 
         this.activateAccordian();
