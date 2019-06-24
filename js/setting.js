@@ -75,4 +75,27 @@ document.querySelector('.form-setting').addEventListener('submit', e => {
 
 (e => {
     setDataOnHtml();
+
+    const tabs = document.querySelectorAll('[p-tab]');
+
+    tabs.forEach((i, o) => {
+        i.addEventListener('click', e => {
+            e.preventDefault();
+            const currentTarget = e.currentTarget;
+            const att = currentTarget.getAttribute('p-tab');
+            const ul = document.querySelector('[p-display]');
+            tabs.forEach((a, b) => {
+                a.classList.remove('active');
+            });
+            currentTarget.classList.add('active');
+            switch (att) {
+                case 'code':
+                    ul.classList.add('active');
+                    break;
+
+                default:
+                    ul.classList.remove('active');
+            }
+        });
+    });
 })();

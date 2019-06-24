@@ -82,7 +82,8 @@ html {
     text-decoration: underline;
 }
 
-.tabtrack:hover {
+.tabtrack:hover,
+.tabtrack.active {
     background: #000;
     color: #fff;
 }
@@ -128,6 +129,8 @@ html {
 
 .input-content input {
     height: 30px;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 .input-content label {
