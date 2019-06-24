@@ -9,9 +9,10 @@ class App {
         elemJson: '',
         list: ''
     };
-    checkpoints = JSON.parse(
-        chrome.storage.sync.get('checkpoints', o => o.checkpoints)
-    );
+    // checkpoints = chrome.storage.sync.get(
+    //     'checkpoints',
+    //     ({ checkpoints }) => checkpoints
+    // );
 
     //     {
     //     ctabtn: '.ctabtn',
@@ -317,8 +318,10 @@ class App {
     }
 
     filterDomAndSetJson() {
-        this.details.elemJson = Object.entries(this.checkpoints).reduce(
-            (a, [cat, elem]) => {
+        chrome.storage.sync.get('checkpoints', ({ checkpoints }) => {
+            this.details.elemJson = Object.entries(
+                JSON.parse(checkpoints)
+            ).reduce((a, [cat, elem]) => {
                 // console.log('categories', cat);
                 a[cat] = Array.prototype.filter.call(
                     document.querySelectorAll(elem),
@@ -327,39 +330,42 @@ class App {
                     }
                 );
                 return a;
-            },
-            {}
-        );
-        const OBJECTENTRIES = Object.entries(this.details.elemJson);
+            }, {});
+            const OBJECTENTRIES = Object.entries(this.details.elemJson);
 
-        this.details.list = OBJECTENTRIES.reduce((acc, [cat, items]) => {
-            const itemsObj = items.reduce((acc, item, i) => {
-                const tagName = {};
-                const elemJson = {};
-                // Returns you the element's attributes
-                for (let a = 0, len = item.attributes.length; a < len; a++) {
-                    elemJson[item.attributes[a].name] =
-                        item.attributes[a].value;
+            this.details.list = OBJECTENTRIES.reduce((acc, [cat, items]) => {
+                const itemsObj = items.reduce((acc, item, i) => {
+                    const tagName = {};
+                    const elemJson = {};
+                    // Returns you the element's attributes
+                    for (
+                        let a = 0, len = item.attributes.length;
+                        a < len;
+                        a++
+                    ) {
+                        elemJson[item.attributes[a].name] =
+                            item.attributes[a].value;
+                        tagName[item.tagName] = elemJson;
+                    }
+                    elemJson.elementText = item.innerText.trim()
+                        ? item.innerText
+                        : 'SORRY NO DATA FOUND 😓';
                     tagName[item.tagName] = elemJson;
-                }
-                elemJson.elementText = item.innerText.trim()
-                    ? item.innerText
-                    : 'SORRY NO DATA FOUND 😓';
-                tagName[item.tagName] = elemJson;
 
-                acc.push(tagName);
+                    acc.push(tagName);
+
+                    return acc;
+                }, []);
+
+                acc[cat] = itemsObj;
 
                 return acc;
-            }, []);
+            }, {});
 
-            acc[cat] = itemsObj;
+            console.log(this.details.elemJson);
 
-            return acc;
-        }, {});
-
-        console.log(this.details.elemJson);
-
-        this.appendPopup();
+            this.appendPopup();
+        });
     }
 
     renderLocation() {
