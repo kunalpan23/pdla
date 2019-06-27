@@ -112,8 +112,8 @@
             .btn-onoff span {
                 position: relative;
                 display: block;
-                width: 80px;
-                height: 34px;
+                width: 50px;
+                height: 24px;
                 border-radius: 40px;
                 background: #ccc;
                 border: 1px solid #ccc;
@@ -129,14 +129,14 @@
             .btn-onoff input ~ span:before {
                 content: 'Off';
                 display: block;
-                width: 34px;
-                height: 34px;
+                width: 26px;
+                height: 26px;
                 position: absolute;
-                right: 0px;
-                font-size: 14px;
+                right: -10px;
+                font-size: 9px;
                 font-family: 'Arial';
                 font-weight: bold;
-                line-height: 34px;
+                line-height: 26px;
                 color: #444;
                 padding: 0px 8px;
                 letter-spacing: 1px;
@@ -148,16 +148,16 @@
             }
             .btn-onoff input:checked ~ span:before {
                 content: 'On';
-                right: 28px;
+                right: 10px;
                 color: #fff;
             }
             .btn-onoff input ~ span:after {
                 content: '';
                 position: absolute;
-                width: 26px;
-                height: 26px;
-                top: 4px;
-                left: 4px;
+                width: 20px;
+                height: 20px;
+                top: 2px;
+                left: 2px;
                 background: #fff;
                 border-radius: 50%;
                 -webkit-transition: 400ms;
@@ -173,7 +173,7 @@
             }
             .btn-onoff input:checked ~ span:after {
                 content: '';
-                left: 51px;
+                left: 27px;
             }
 
             .btn-onoff {

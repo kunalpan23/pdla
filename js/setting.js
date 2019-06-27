@@ -1,3 +1,4 @@
+// Set All the JSON on html
 const setDataOnHtml = () => {
     const ul = document.querySelector('[p-checkpoints]');
     if (ul.offsetHeight > 0) {
@@ -18,21 +19,25 @@ const setDataOnHtml = () => {
 
         // After Appending the remove button on the html adding event listener directly to it and then the functionality
         const removeKeyElem = document.querySelectorAll('.removeKey');
-        removeKeyElem.forEach((elem, i) => {
-            elem.addEventListener('click', e => {
-                e.preventDefault();
-                const currentTarget = e.currentTarget;
-                chrome.storage.sync.get('checkpoints', o => {
-                    const obj = JSON.parse(o.checkpoints);
-                    const key = currentTarget.parentNode.getAttribute('key');
-                    let data = '';
-                    delete obj[key];
-                    data = JSON.stringify(obj);
-                    chrome.storage.sync.set({ checkpoints: data });
-                    setDataOnHtml();
+        if (removeKeyElem) {
+            removeKeyElem.forEach((elem, i) => {
+                elem.addEventListener('click', e => {
+                    e.preventDefault();
+                    const currentTarget = e.currentTarget;
+                    chrome.storage.sync.get('checkpoints', o => {
+                        const obj = JSON.parse(o.checkpoints);
+                        const key = currentTarget.parentNode.getAttribute(
+                            'key'
+                        );
+                        let data = '';
+                        delete obj[key];
+                        data = JSON.stringify(obj);
+                        chrome.storage.sync.set({ checkpoints: data });
+                        setDataOnHtml();
+                    });
                 });
             });
-        });
+        }
     });
 };
 
@@ -41,7 +46,7 @@ const saveChanges = () => {
     const value = document.querySelector('[s-input="value"]').value;
     chrome.storage.sync.get('checkpoints', o => {
         let data = o.checkpoints;
-        const obj = JSON.parse(o.checkpoints);
+        const obj = data ? JSON.parse(data) : {};
         if (!key || !value) {
             alert('Please Enter Valid Inputs');
             return;
@@ -64,6 +69,9 @@ const saveChanges = () => {
         chrome.storage.sync.set({ checkpoints: data });
 
         setDataOnHtml();
+        document.querySelector('[s-input="key"]').value = '';
+        document.querySelector('[s-input="value"]').value = '';
+        document.querySelector('[s-input="key"]').focus();
     });
 };
 
@@ -77,7 +85,7 @@ document.querySelector('.form-setting').addEventListener('submit', e => {
     setDataOnHtml();
 
     const tabs = document.querySelectorAll('[p-tab]');
-
+    document.querySelector('[s-input="key"]').focus();
     tabs.forEach((i, o) => {
         i.addEventListener('click', e => {
             e.preventDefault();

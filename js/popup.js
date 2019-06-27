@@ -18,7 +18,7 @@ switchElem.addEventListener('change', e => {
     chrome.runtime.sendMessage({ type: 'toggle' });
 });
 
-window.addEventListener('DOMContentLoaded', o => {
+(o => {
     chrome.storage.local.get('toggle', o => {
         switchElem.checked = o.toggle;
         if (o.toggle) {
@@ -29,4 +29,4 @@ window.addEventListener('DOMContentLoaded', o => {
 
         console.log(o.toggle);
     });
-});
+})();

@@ -82,9 +82,7 @@ class App {
         const parentUl = document.querySelector('[p-results]');
         let tagCount = 0;
         let attrCount = 0;
-        console.log(this.details.list);
         for (let x in this.details.list) {
-            console.log(this.details.list);
             const li = document.createElement('li');
             const div = document.createElement('div');
             div.classList.add('button');
@@ -317,101 +315,78 @@ class App {
         this.loopThrough();
     }
 
+    isEmptyObject(obj) {
+        const hasOwnProperty = Object.prototype.hasOwnProperty;
+        for (var key in obj) {
+            if (hasOwnProperty.call(obj, key)) return true;
+            else return false;
+        }
+    }
+
     filterDomAndSetJson() {
         chrome.storage.sync.get('checkpoints', ({ checkpoints }) => {
-            this.details.elemJson = Object.entries(
-                JSON.parse(checkpoints)
-            ).reduce((a, [cat, elem]) => {
-                // console.log('categories', cat);
-                a[cat] = Array.prototype.filter.call(
-                    document.querySelectorAll(elem),
-                    el => {
-                        return el;
-                    }
+            const data = JSON.parse(checkpoints);
+            if (this.isEmptyObject(data)) {
+                this.details.elemJson = Object.entries(data).reduce(
+                    (a, [cat, elem]) => {
+                        a[cat] = Array.prototype.filter.call(
+                            document.querySelectorAll(elem),
+                            el => {
+                                return el;
+                            }
+                        );
+                        return a;
+                    },
+                    {}
                 );
-                return a;
-            }, {});
-            const OBJECTENTRIES = Object.entries(this.details.elemJson);
+                const OBJECTENTRIES = Object.entries(this.details.elemJson);
 
-            this.details.list = OBJECTENTRIES.reduce((acc, [cat, items]) => {
-                const itemsObj = items.reduce((acc, item, i) => {
-                    const tagName = {};
-                    const elemJson = {};
-                    // Returns you the element's attributes
-                    for (
-                        let a = 0, len = item.attributes.length;
-                        a < len;
-                        a++
-                    ) {
-                        elemJson[item.attributes[a].name] =
-                            item.attributes[a].value;
-                        tagName[item.tagName] = elemJson;
-                    }
-                    elemJson.elementText = item.innerText.trim()
-                        ? item.innerText
-                        : 'SORRY NO DATA FOUND 😓';
-                    tagName[item.tagName] = elemJson;
+                this.details.list = OBJECTENTRIES.reduce(
+                    (acc, [cat, items]) => {
+                        const itemsObj = items.reduce((acc, item, i) => {
+                            const tagName = {};
+                            const elemJson = {};
+                            // Returns you the element's attributes
+                            for (
+                                let a = 0, len = item.attributes.length;
+                                a < len;
+                                a++
+                            ) {
+                                elemJson[item.attributes[a].name] =
+                                    item.attributes[a].value;
+                                tagName[item.tagName] = elemJson;
+                            }
+                            elemJson.elementText = item.innerText.trim()
+                                ? item.innerText
+                                : 'SORRY NO DATA FOUND 😓';
+                            tagName[item.tagName] = elemJson;
 
-                    acc.push(tagName);
+                            acc.push(tagName);
 
-                    return acc;
-                }, []);
+                            return acc;
+                        }, []);
 
-                acc[cat] = itemsObj;
+                        acc[cat] = itemsObj;
 
-                return acc;
-            }, {});
+                        return acc;
+                    },
+                    {}
+                );
 
-            console.log(this.details.elemJson);
-
-            this.appendPopup();
+                this.appendPopup();
+            } else {
+                const newURL = chrome.runtime.getURL('setting.html');
+                window.open(newURL);
+            }
         });
     }
 
-    renderLocation() {
-        const location = window.location;
-
-        // Need to check if the Test Is going to run on the production link or the local link or live link
-        switch (true) {
-            // Is localHost Link
-            case location.href.includes('localhost:'):
-                this.details.process = 'dev';
-                break;
-
-            // Is extensionslabs link
-            case location.href.includes('extensionslabs'):
-                this.details.process = 'prod';
-                break;
-
-            // is live link
-            default:
-                this.details.process = 'live';
-                break;
-        }
-
-        if (
-            (this.details.process == 'live' ||
-                this.details.process == 'prod') &&
-            !location.href.includes('log')
-        ) {
-            location.href = `${location.href}${
-                location.href.includes('?') ? '&' : '?'
-            }log`;
-        }
-
+    toggle() {
         chrome.storage.local.get('toggle', o => {
             if (o.toggle) {
                 this.filterDomAndSetJson();
             }
         });
-    }
-
-    checkToggle(toggle) {
-        if (toggle) {
-            this.appToggle = toggle;
-            this.renderLocation();
-            console.log('this is appToggle', this.appToggle);
-        }
     }
 }
 
@@ -419,13 +394,10 @@ const app = new App();
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action == 'getDom') {
-        sendResponse({ dom: 'Dom is working fine' });
-        app.checkToggle(true);
+        const data = {};
+        sendResponse(data);
+        app.toggle(true);
     } else {
         sendResponse({});
     }
 });
-
-// window.addEventListener('DOMContentLoaded', () => {
-//     chrome.storage.local.set({ data: queries });
-// });
