@@ -6,16 +6,19 @@ const setDataOnHtml = () => {
     }
 
     chrome.storage.sync.get('checkpoints', ({ checkpoints }) => {
-        const entriesFromJson = Object.entries(JSON.parse(checkpoints));
+        const data = checkpoints ? JSON.parse(checkpoints) : '';
+        if (data) {
+            const entriesFromJson = Object.entries(data);
 
-        entriesFromJson.reduce((a, [key, value]) => {
-            const li = document.createElement('li');
-            li.setAttribute('key', key);
+            entriesFromJson.reduce((a, [key, value]) => {
+                const li = document.createElement('li');
+                li.setAttribute('key', key);
 
-            const htm = `<span>${key}</span>: <span>${value}</span><span class="removeKey">❌</span>`;
-            li.innerHTML = htm;
-            ul.appendChild(li);
-        }, 0);
+                const htm = `<span>${key}</span>: <span>${value}</span><span class="removeKey">❌</span>`;
+                li.innerHTML = htm;
+                ul.appendChild(li);
+            }, 0);
+        }
 
         // After Appending the remove button on the html adding event listener directly to it and then the functionality
         const removeKeyElem = document.querySelectorAll('.removeKey');
@@ -45,33 +48,35 @@ const saveChanges = () => {
     const key = document.querySelector('[s-input="key"]').value;
     const value = document.querySelector('[s-input="value"]').value;
     chrome.storage.sync.get('checkpoints', o => {
-        let data = o.checkpoints;
+        let data = o.checkpoints || '';
         const obj = data ? JSON.parse(data) : {};
-        if (!key || !value) {
-            alert('Please Enter Valid Inputs');
-            return;
+        if(obj){
+            if (!key || !value) {
+                alert('Please Enter Valid Inputs');
+                return;
+            }
+    
+            const uniquePairs = `"${key}":"${value}"`;
+            const uniqueKey = `${key}`;
+            if (data.includes(uniquePairs)) {
+                alert('These inputs are already added! please try another inputs');
+                return;
+            }
+    
+            if (data.includes(uniqueKey)) {
+                alert('Please keep the key Unique');
+                return;
+            }
+    
+            obj[key] = value;
+            data = JSON.stringify(obj);
+            chrome.storage.sync.set({ checkpoints: data });
+    
+            setDataOnHtml();
+            document.querySelector('[s-input="key"]').value = '';
+            document.querySelector('[s-input="value"]').value = '';
+            document.querySelector('[s-input="key"]').focus();
         }
-
-        const uniquePairs = `"${key}":"${value}"`;
-        const uniqueKey = `${key}`;
-        if (data.includes(uniquePairs)) {
-            alert('These inputs are already added! please try another inputs');
-            return;
-        }
-
-        if (data.includes(uniqueKey)) {
-            alert('Please keep the key Unique');
-            return;
-        }
-
-        obj[key] = value;
-        data = JSON.stringify(obj);
-        chrome.storage.sync.set({ checkpoints: data });
-
-        setDataOnHtml();
-        document.querySelector('[s-input="key"]').value = '';
-        document.querySelector('[s-input="value"]').value = '';
-        document.querySelector('[s-input="key"]').focus();
     });
 };
 

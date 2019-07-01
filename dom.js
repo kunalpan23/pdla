@@ -325,7 +325,7 @@ class App {
 
     filterDomAndSetJson() {
         chrome.storage.sync.get('checkpoints', ({ checkpoints }) => {
-            const data = JSON.parse(checkpoints);
+            const data = checkpoints ? JSON.parse(checkpoints) : {};
             if (this.isEmptyObject(data)) {
                 this.details.elemJson = Object.entries(data).reduce(
                     (a, [cat, elem]) => {
@@ -393,11 +393,21 @@ class App {
 const app = new App();
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.action == 'getDom') {
-        const data = {};
-        sendResponse(data);
-        app.toggle(true);
-    } else {
-        sendResponse({});
+    switch(request.action ) {
+        case 'getDom': 
+            const data = {};
+            sendResponse(data);
+            app.toggle(true);
+        break;
+    
+        case 'alreadyinstalled': 
+            sendResponse({event: 'Already Installed Fired'});
+            document.dispatchEvent(new Event('AlreadyInstalled'));
+        break;
+        
+        default: 
+            sendResponse({});
+        break;
     }
 });
+
