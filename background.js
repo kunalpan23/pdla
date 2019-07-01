@@ -27,7 +27,7 @@ function setIcon(value) {
     chrome.browserAction.setIcon({ path: path });
 }
 
-getToggle(setIcon); // Initial state
+// getToggle(setIcon); // Initial state
 
 chrome.runtime.onMessage.addListener((message, sender, sendRes) => {
     if (message.type == 'toggle') {
