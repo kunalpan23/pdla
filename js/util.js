@@ -8,6 +8,21 @@ __button.forEach((e, o) => {
             console.log(__targetAtt);
 
             switch (__targetAtt) {
+                case 'alreadyInstalled':
+                    chrome.tabs.query(
+                        { active: true, currentWindow: true },
+                        function(tabs) {
+                            chrome.tabs.sendMessage(
+                                tabs[0].id,
+                                { action: 'alreadyinstalled' },
+                                function(response) {
+                                    console.log(response.event);
+                                }
+                            );
+                        }
+                    );
+                break;
+
                 case 'test':
                     console.log('Running Test Please wait');
                     chrome.tabs.query(
