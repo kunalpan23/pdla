@@ -9,20 +9,7 @@ class App {
         elemJson: '',
         list: ''
     };
-    // checkpoints = chrome.storage.sync.get(
-    //     'checkpoints',
-    //     ({ checkpoints }) => checkpoints
-    // );
-
-    //     {
-    //     ctabtn: '.ctabtn',
-    //         title: 'title',
-    //             anchrortags: 'a',
-    //                 link: 'link',
-    //                     scripts: 'script',
-    //                         att: '[data-event_tag]',
-    //                             id: '#overlay_template'
-    // }
+   
     constructor() {}
 
     setTextForHideAndShow(e) {
@@ -395,8 +382,7 @@ const app = new App();
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     switch(request.action ) {
         case 'getDom': 
-            const data = {};
-            sendResponse(data);
+            sendResponse({event: "DOM FETCHED"});
             app.toggle(true);
         break;
     
