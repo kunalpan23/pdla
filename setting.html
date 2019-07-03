@@ -21,24 +21,50 @@
                     <ul class="settingList flex" p-display>
                         <li>
                             <div class="innercontent">
-                                <form class="form-setting">
+                                <form class="form-setting" l-form="checkpoints">
                                     <div class="input-content">
                                         <label>Key:</label>
-                                        <input type="text" s-input="key" />
+                                        <input
+                                            type="text"
+                                            s-key="checkpoints"
+                                        />
                                     </div>
                                     <div class="input-content">
                                         <label>Value:</label>
-                                        <input type="text" s-input="value" />
+                                        <input
+                                            type="text"
+                                            s-value="checkpoints"
+                                        />
                                     </div>
                                     <button type="submit" class="submitbtn">
                                         Save
                                     </button>
                                 </form>
                             </div>
-                            <ul p-checkpoints=""></ul>
+                            <ul p-list="checkpoints"></ul>
                         </li>
 
-                        <li></li>
+                        <li>
+                            <div class="innercontent">
+                                <form class="form-setting" l-form="validData">
+                                    <div class="input-content">
+                                        <label>Key:</label>
+                                        <input type="text" s-key="validData" />
+                                    </div>
+                                    <div class="input-content">
+                                        <label>Value:</label>
+                                        <input
+                                            type="text"
+                                            s-value="validData"
+                                        />
+                                    </div>
+                                    <button type="submit" class="submitbtn">
+                                        Save
+                                    </button>
+                                </form>
+                            </div>
+                            <ul p-list="validData"></ul>
+                        </li>
                     </ul>
                 </div>
             </div>
