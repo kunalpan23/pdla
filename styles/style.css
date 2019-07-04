@@ -100,8 +100,7 @@ html {
 }
 
 .settingList {
-    width: 1120px;
-    transition: ease all 500ms;
+    width: 1120px; 
 }
 
 .settingList.active {
@@ -151,6 +150,10 @@ html {
     margin: 10px 0;
 }
 
+[p-list] li {
+    display: flex;
+}
+
 [p-list]::-webkit-scrollbar {
     width: 8px;
 }
@@ -172,10 +175,12 @@ html {
 }
 
 [p-list] li {
-    display: block;
+    display: flex;
     width: auto;
     font-size: 14px;
     padding: 10px;
+    justify-content: center;
+    align-items: center;
 }
 
 [p-list] li span {

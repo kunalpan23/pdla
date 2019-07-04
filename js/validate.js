@@ -17,19 +17,22 @@ class App {
     }
 
     getStorageData() {
-        chrome.storage.sync.get('validData', ({ data }) => {
+        chrome.storage.sync.get('validData', x => {
+            const data = JSON.parse(x['validData']) || {};
             if (this.isEmptyObject(data)) {
-                console.log(data);
+                
             } else {
-                const newURL = chrome.runtime.getURL('setting.html');
+                const newURL = chrome.runtime.getURL('setting.html?code');
                 window.open(newURL);
             }
         });
     }
 }
 
-_.form.addEventListener('submit', e => {
-    e.preventDefault();
-    const app = new App(_.input.value);
-    app.getStorageData();
-});
+(e => {
+    _.form.addEventListener('submit', e => {
+        e.preventDefault();
+        const app = new App(_.input.value);
+        app.getStorageData();
+    });
+})()

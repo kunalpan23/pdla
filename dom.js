@@ -9,7 +9,7 @@ class App {
         elemJson: '',
         list: ''
     };
-   
+
     constructor() {}
 
     setTextForHideAndShow(e) {
@@ -362,7 +362,7 @@ class App {
 
                 this.appendPopup();
             } else {
-                const newURL = chrome.runtime.getURL('setting.html');
+                const newURL = chrome.runtime.getURL('setting.html?code');
                 window.open(newURL);
             }
         });
@@ -380,20 +380,19 @@ class App {
 const app = new App();
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    switch(request.action ) {
-        case 'getDom': 
-            sendResponse({event: "DOM FETCHED"});
+    switch (request.action) {
+        case 'getDom':
+            sendResponse({ event: 'DOM FETCHED' });
             app.toggle(true);
-        break;
-    
-        case 'alreadyinstalled': 
-            sendResponse({event: 'Already Installed Fired'});
+            break;
+
+        case 'alreadyinstalled':
+            sendResponse({ event: 'Already Installed Fired' });
             document.dispatchEvent(new Event('AlreadyInstalled'));
-        break;
-        
-        default: 
+            break;
+
+        default:
             sendResponse({});
-        break;
+            break;
     }
 });
-
