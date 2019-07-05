@@ -311,8 +311,8 @@ class App {
     }
 
     filterDomAndSetJson() {
-        chrome.storage.sync.get('checkpoints', ({ checkpoints }) => {
-            const data = checkpoints ? JSON.parse(checkpoints) : {};
+        chrome.storage.sync.get('checkpoints', o => {
+            const data = o ? JSON.parse(o.checkpoints) : {};
             if (this.isEmptyObject(data)) {
                 this.details.elemJson = Object.entries(data).reduce(
                     (a, [cat, elem]) => {
