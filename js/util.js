@@ -21,7 +21,7 @@ __button.forEach((e, o) => {
                             );
                         }
                     );
-                break;
+                    break;
 
                 case 'test':
                     console.log('Running Test Please wait');
@@ -54,7 +54,7 @@ __button.forEach((e, o) => {
 
                 case 'setting':
                     console.log('Help Page is opening');
-                    __location = `${__location.origin}/setting.html`;
+                    __location = `${__location.origin}/setting.html?spotout`;
                     window.open(__location, '_blank');
                     break;
             }
