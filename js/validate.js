@@ -17,39 +17,9 @@ class App {
         );
     }
 
-    sortHTMLCode() {
-        let html = '';
-        switch (true) {
-            case this.value.includes('@php'):
-                const el = this.value.match(/<(.*|[^]+?)>/gim);
-                // Sort Out the HTML to validate
-                const getBodyTag =
-                    el.findIndex(obj => obj.includes('<body')) || 0;
-                let count = getBodyTag;
-                let headers = '';
-                while (count > 0) {
-                    count--;
-                    headers += el[count];
-                }
-
-                html = `<!DOCTYPE html><html><head> ${headers}</head>`;
-
-                for (let i = getBodyTag, len = el.length; i < len; i++) {
-                    html += el[i];
-                }
-
-                html = html.replace(/\s\s+/g, ' ');
-                break;
-            case this.value.includes('<html'):
-                html = this.value;
-                break;
-
-            default:
-                break;
-        }
-
-        console.log(html);
-
+    // Code Validation logic
+    validateCode(html) {
+        const resultEl = document.querySelector('.results');
         const tags = [];
         html.split('\n').forEach(function(line, i) {
             (line.match(/<[^>]*[^/]>/g) || []).forEach(function(tag, j) {
@@ -65,7 +35,8 @@ class App {
             });
         });
         if (tags.length == 0) {
-            // $('#unclosed_results').text('No tags found.');
+            resultEl.textContent = 'No tags found.';
+            resultEl.style.color = 'red';
             console.log('No tags found.');
             return;
         }
@@ -80,29 +51,33 @@ class App {
                     continue;
                 }
                 if (openTags.length == 0) {
-                    // $('#unclosed_results').addClass('output-error').text('Closing tag ' + closingTag.tag + ' on line ' + closingTag.line + ' does not have corresponding open tag.');
+                    resultEl.textContent = `Closing tag ${
+                        closingTag.tag
+                    } on line ${
+                        closingTag.line
+                    } does not have corresponding open tag.`;
+                    resultEl.style.color = 'red';
                     console.log(
-                        'Closing tag ' +
-                            closingTag.tag +
-                            ' on line ' +
-                            closingTag.line +
-                            ' does not have corresponding open tag.'
+                        `Closing tag ${closingTag.tag} on line ${
+                            closingTag.line
+                        } does not have corresponding open tag.`
                     );
                     return;
                 }
                 const openTag = openTags[openTags.length - 1];
                 if (closingTag.name != openTag.name) {
-                    // $('#unclosed_results').addClass('output-error').text('Closing tag ' + closingTag.tag + ' on line ' + closingTag.line + ' does not match open tag ' + openTag.tag + 'on line ' + openTag.line + '.');
+                    resultEl.textContent = `Closing tag ${
+                        closingTag.tag
+                    } on line ${closingTag.line} does not match open tag ${
+                        openTag.tag
+                    } on line ${openTag.line}.`;
+                    resultEl.style.color = 'red';
                     console.log(
-                        'Closing tag ' +
-                            closingTag.tag +
-                            ' on line ' +
-                            closingTag.line +
-                            ' does not match open tag ' +
-                            openTag.tag +
-                            'on line ' +
-                            openTag.line +
-                            '.'
+                        `Closing tag ${closingTag.tag} on line ${
+                            closingTag.line
+                        } does not match open tag ${openTag.tag} on line ${
+                            openTag.line
+                        }.`
                     );
                     return;
                 } else {
@@ -118,16 +93,10 @@ class App {
         }
         if (openTags.length > 0) {
             let openTag = openTags[openTags.length - 1];
-            // $('#unclosed_results')
-            //     .addClass('output-error')
-            //     .text(
-            //         'Open tag ' +
-            //             openTag.tag +
-            //             ' on line ' +
-            //             openTag.line +
-            //             ' does not have a corresponding closing tag.'
-            //     );
-
+            resultEl.textContent = `Open tag ${openTag.tag} on line ${
+                openTag.line
+            } does not have a corresponding closing tag.'`;
+            resultEl.style.color = 'red';
             console.log(
                 'Open tag ' +
                     openTag.tag +
@@ -137,7 +106,58 @@ class App {
             );
             return;
         }
-        console.log('Success: No unclosed tags found.');
+        resultEl.textContent = 'Success: No unclosed tags found.';
+        resultEl.style.color = 'green';
+    }
+
+    sortHTMLCode() {
+        let html = '';
+        switch (true) {
+            case this.value.includes('@php'):
+                // Sort Out the HTML to validate
+                let headers = '';
+                const el = this.value.match(/<(.*|[^]+?)>/gim);
+
+                // Finding the index of the body tag
+                const getBodyTag =
+                    el.findIndex(obj => obj.includes('<body')) || 0;
+                let count = getBodyTag;
+
+                // Fetching the title from the PHP code
+                const title =
+                    this.value.match(/title\s*=\s*(["|'](.*?)["|'])/i)[2] ||
+                    'Validation';
+
+                // appending header content inside header from the list of meta and link script tags Sequentially
+                while (count > 0) {
+                    count--;
+                    headers += el[count];
+                }
+
+                html = `<!DOCTYPE html><html><head><title>${title}</title> ${headers}</head>`;
+
+                for (let i = getBodyTag, len = el.length; i < len; i++) {
+                    html += el[i];
+                }
+
+                // Replacing multiple spaces from the code to single space
+                html = html.replace(/\s\s+/g, ' ');
+
+                break;
+
+            // Validation for SIMPLE HTML CODE
+            case this.value.includes('<html'):
+                html = this.value;
+                break;
+
+            default:
+                break;
+        }
+
+        // Ignoring the validation for Comment part in html
+        html = html.replace(/<!--\s*(.*?)\s*-->/g, '');
+
+        this.validateCode(html);
     }
 
     getStorageData() {

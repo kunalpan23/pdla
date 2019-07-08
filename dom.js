@@ -312,7 +312,7 @@ class App {
 
     filterDomAndSetJson() {
         chrome.storage.sync.get('checkpoints', o => {
-            const data = o ? JSON.parse(o.checkpoints) : {};
+            const data = this.isEmptyObject(o) ? JSON.parse(o.checkpoints) : {};
             if (this.isEmptyObject(data)) {
                 this.details.elemJson = Object.entries(data).reduce(
                     (a, [cat, elem]) => {
@@ -362,7 +362,7 @@ class App {
 
                 this.appendPopup();
             } else {
-                const newURL = chrome.runtime.getURL('setting.html?code');
+                const newURL = chrome.runtime.getURL('setting.html?spotout');
                 window.open(newURL);
             }
         });

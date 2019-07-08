@@ -100,7 +100,7 @@ html {
 }
 
 .settingList {
-    width: 1120px; 
+    width: 1120px;
 }
 
 .settingList.active {
@@ -193,6 +193,15 @@ html {
     color: #fff;
 }
 
-.removeKey {
+.removeKey,
+.clear-all-code {
     cursor: pointer;
+}
+
+.clear-all-code:hover {
+    text-decoration: underline;
+}
+
+.results {
+    margin: 10px 0 30px 0;
 }
