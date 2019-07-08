@@ -21,8 +21,7 @@ class App {
         let html = '';
         switch (true) {
             case this.value.includes('@php'):
-                const el = this.value.match(/<(.*?)>/gim);
-
+                const el = this.value.match(/<(.*|[^]+?)>/gim);
                 // Sort Out the HTML to validate
                 const getBodyTag =
                     el.findIndex(obj => obj.includes('<body')) || 0;
@@ -38,6 +37,8 @@ class App {
                 for (let i = getBodyTag, len = el.length; i < len; i++) {
                     html += el[i];
                 }
+
+                html = html.replace(/\s\s+/g, ' ');
                 break;
             case this.value.includes('<html'):
                 html = this.value;
@@ -46,6 +47,8 @@ class App {
             default:
                 break;
         }
+
+        console.log(html);
 
         const tags = [];
         html.split('\n').forEach(function(line, i) {
