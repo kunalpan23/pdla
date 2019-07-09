@@ -343,8 +343,8 @@ class App {
                                     item.attributes[a].value;
                                 tagName[item.tagName] = elemJson;
                             }
-                            elemJson.elementText = item.innerText.trim()
-                                ? item.innerText
+                            elemJson.elementText = item.innerText
+                                ? item.innerText.trim()
                                 : 'SORRY NO DATA FOUND 😓';
                             tagName[item.tagName] = elemJson;
 

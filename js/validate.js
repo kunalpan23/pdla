@@ -1,6 +1,7 @@
 class App {
     constructor(val) {
         this.value = val;
+        this.checkpoints = {};
     }
 
     isEmptyObject(obj) {
@@ -151,10 +152,13 @@ class App {
                 break;
 
             default:
+                const defaultel = this.value.match(/<(.*|[^]+?)>/gim);
+                html = defaultel.join(' ').replace(/\s\s+/g, ' ');
+                console.log(html);
                 break;
         }
 
-        // Ignoring the validation for Comment part in html
+        // Ignoring the Commented part in html
         html = html.replace(/<!--\s*(.*?)\s*-->/g, '');
 
         this.validateCode(html);
@@ -162,9 +166,10 @@ class App {
 
     getStorageData() {
         chrome.storage.sync.get('validData', x => {
-            const data = JSON.parse(x.validData) || {};
+            const data = this.isEmptyObject(x) ? JSON.parse(x.validData) : {};
             if (this.isEmptyObject(data)) {
                 this.sortHTMLCode();
+                this.checkpoints = data;
             } else {
                 const newURL = chrome.runtime.getURL('setting.html?code');
                 window.open(newURL);

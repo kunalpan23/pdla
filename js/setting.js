@@ -48,8 +48,8 @@ const setDataOnHtml = o => {
 
 const saveChanges = a => {
     const _ = {
-        key: document.querySelector(`[s-key="${a}"]`).value,
-        value: document.querySelector(`[s-value="${a}"]`).value
+        key: document.querySelector(`[s-key="${a}"]`).value.trim(),
+        value: document.querySelector(`[s-value="${a}"]`).value.trim()
     };
     chrome.storage.sync.get(a, o => {
         let data = o[a] || '';
@@ -138,13 +138,15 @@ const ifPresentInUrl = l => {
     });
 
     routes();
-    
+
     tabs.forEach((i, o) => {
         i.addEventListener('click', e => {
             e.preventDefault();
             const currentTarget = e.currentTarget;
             const att = currentTarget.getAttribute('p-tab');
-            window.location.href = `${window.location.origin}/setting.html?${att}`;
+            window.location.href = `${
+                window.location.origin
+            }/setting.html?${att}`;
         });
     });
 })();
