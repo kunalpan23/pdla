@@ -1,7 +1,15 @@
+const _ = {
+    form: document.querySelector('#validate-form'),
+    input: document.querySelector('.filter'),
+    clear_all: document.querySelector('.clear-all-code'),
+    customcheckresults: document.querySelector('.customcheckresults'),
+    ul: document.querySelector('.htmlvalidationresults')
+};
+
 class App {
     constructor(val) {
         this.value = val;
-        this.checkpoints = {};
+        this.checkpoints = '';
     }
 
     isEmptyObject(obj) {
@@ -16,6 +24,55 @@ class App {
         return tagName.match(
             /area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr|script/i
         );
+    }
+
+    validateCustomTags(html, data) {
+        const savedEntries = Object.entries(this.checkpoints);
+        if (
+            document.querySelector('.customcheckresults').offsetHeight > 0 ||
+            _.ul.offsetHeight > 0
+        ) {
+            document.querySelector('.customcheckresults').innerHTML = '';
+            _.ul.innerHTML = '';
+        }
+        savedEntries.reduce((a, [cat, item]) => {
+            let count = 0;
+            const li = document.createElement('li');
+            const div = document.createElement('div');
+            if (html.includes(item)) {
+                div.classList.add(a);
+                div.style.color = 'green';
+                div.innerHTML = `Match Found For ${item}`;
+            } else {
+                div.classList.add('error');
+                div.style.color = 'red';
+                div.innerHTML = `No Match Found For ${item}`;
+            }
+            li.appendChild(div);
+            document.querySelector('.customcheckresults').appendChild(li);
+        }, 'success');
+
+        if (data) {
+            const { messages } = data;
+            messages.map((item, indx) => {
+                const li = document.createElement('li');
+                li.classList.add('flex');
+                let span = '';
+                switch (item.type) {
+                    case 'error':
+                        span = `<span class="${item.type}">🔴<span>`;
+                        break;
+                    case 'info':
+                        span = `<span class="${item.subType}">⚠️<span>`;
+                        break;
+                    default:
+                        span = `<span class="success">✅<span>`;
+                }
+
+                li.innerHTML = `${span}  ${item.message}`;
+                _.ul.appendChild(li);
+            });
+        }
     }
 
     // Code Validation logic
@@ -63,7 +120,7 @@ class App {
                             closingTag.line
                         } does not have corresponding open tag.`
                     );
-                    return;
+                    // return;
                 }
                 const openTag = openTags[openTags.length - 1];
                 if (closingTag.name != openTag.name) {
@@ -80,7 +137,7 @@ class App {
                             openTag.line
                         }.`
                     );
-                    return;
+                    // return;
                 } else {
                     openTags.pop();
                 }
@@ -105,10 +162,12 @@ class App {
                     openTag.line +
                     ' does not have a corresponding closing tag.'
             );
-            return;
+            // return;
         }
         resultEl.textContent = 'Success: No unclosed tags found.';
         resultEl.style.color = 'green';
+
+        this.validateCustomTags(this.value);
     }
 
     sortHTMLCode() {
@@ -161,16 +220,54 @@ class App {
         // Ignoring the Commented part in html
         html = html.replace(/<!--\s*(.*?)\s*-->/g, '');
 
-        this.validateCode(html);
+        fetch('https://html5.validator.nu?out=json', {
+            method: 'post',
+            body: html,
+            headers: {
+                'Content-Type': 'text/html'
+            }
+        })
+            .then(res => {
+                if (res.status !== 200) {
+                    console.log('this error');
+                    return;
+                }
+
+                return res.json();
+            })
+            .then(data => {
+                this.validateCustomTags(this.value, data);
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
+        // this.validateCode(html);
     }
 
     getStorageData() {
         chrome.storage.sync.get('validData', x => {
             const data = this.isEmptyObject(x) ? JSON.parse(x.validData) : {};
             if (this.isEmptyObject(data)) {
+                this.checkpoints = { ...data };
                 this.sortHTMLCode();
-                this.checkpoints = data;
             } else {
+                const defaultsValues = {
+                    components_customBody: "@include('components.customBody')",
+                    cancelPrompt: '@include($cancelPrompt)',
+                    cwsArrows: '@include($cwsArrow)',
+                    overlayTemplate: '@include($overlayTemplate)',
+                    specificConstant: 'specificConstant',
+                    extensionFolderName: '$extensionFolderName',
+                    title: '$title',
+                    overlayTemplate: '$overlayTemplate',
+                    cwsArrow: '$cwsArrow',
+                    cancelPrompt: '$cancelPrompt',
+                    header_info: "@component('components.headerInfo'"
+                };
+                chrome.storage.sync.set({
+                    validData: JSON.stringify(defaultsValues)
+                });
                 const newURL = chrome.runtime.getURL('setting.html?code');
                 window.open(newURL);
             }
@@ -179,12 +276,6 @@ class App {
 }
 
 (e => {
-    const _ = {
-        form: document.querySelector('#validate-form'),
-        input: document.querySelector('.filter'),
-        clear_all: document.querySelector('.clear-all-code')
-    };
-
     _.input.focus();
 
     _.form.addEventListener('submit', e => {
@@ -196,6 +287,8 @@ class App {
     _.clear_all.addEventListener('click', e => {
         if (_.input.value.length > 0) {
             _.input.value = '';
+            _.customcheckresults.innerHTML = '';
+            _.ul.innerHTML = '';
         }
     });
 })();

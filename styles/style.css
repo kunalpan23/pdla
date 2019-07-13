@@ -12,7 +12,6 @@ html {
     line-height: 1.47;
     font-family: cursive;
     box-sizing: border-box;
-    overflow: hidden;
 }
 
 .flex {
@@ -201,6 +200,7 @@ html {
     text-decoration: underline;
 }
 
-.results {
+.results,
+.customcheckresults {
     margin: 10px 0 30px 0;
 }
